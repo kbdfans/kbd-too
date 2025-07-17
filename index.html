@@ -1,290 +1,140 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>TOFU TKL 配置器</title>
-    <style>
-        body { font-family: sans-serif; max-width: 700px; margin: 30px auto; }
-        label, select { display: block; margin: 12px 0; font-size: 16px; }
-        .result { margin-top: 20px; padding: 15px; background: #f7f7f7; border: 1px solid #ccc; }
-    </style>
+  <meta charset="UTF-8">
+  <title>TOFU TKL 配置模拟器</title>
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: 30px auto; background: #000; color: #fff; }
+    label, select { display: block; margin: 12px 0; font-size: 16px; color: #fff; }
+    select { background: #111; color: #fff; border: 1px solid #555; padding: 5px; }
+    .result { margin-top: 20px; padding: 15px; background: #111; border: 1px solid #333; }
+    .result span { color: red; font-weight: bold; }
+  </style>
 </head>
 <body>
-    <h2>TOFU TKL 配置器</h2>
+  <h2>键盘配置器 Demo</h2>
 
-    <div id="config"></div>
+  <div id="config"></div>
 
-    <div class="result">
-        <p><strong>总价：</strong><span id="totalPrice">¥0.00</span></p>
-        <p><strong>总重量：</strong><span id="totalWeight">0g</span></p>
-    </div>
+  <div class="result">
+    <p><strong>总价：</strong><span id="totalPrice">¥0.00</span></p>
+    <p><strong>总重量：</strong><span id="totalWeight">0g</span></p>
+  </div>
 
-    <script>
-        const configData = {
-  "top_case": [
-    {
-      "name": "阳极铝黑色",
-      "price": 399.0,
-      "weight": 379.0
-    },
-    {
-      "name": "阳极铝银色",
-      "price": 399.0,
-      "weight": 379.0
-    },
-    {
-      "name": "阳极铝浅灰色",
-      "price": 399.0,
-      "weight": 379.0
-    },
-    {
-      "name": "阳极铝大红色",
-      "price": 399.0,
-      "weight": 379.0
-    },
-    {
-      "name": "阳极铝灰金",
-      "price": 399.0,
-      "weight": 379.0
-    },
-    {
-      "name": "涂层N9",
-      "price": 399.0,
-      "weight": 379.0
-    },
-    {
-      "name": "电泳白",
-      "price": 399.0,
-      "weight": 379.0
-    },
-    {
-      "name": "RAW",
-      "price": 399.0,
-      "weight": 379.0
+  <script>
+    const configData = {
+      "top_case":[
+        {"name":"阳极铝黑色","price":399,"weight":379},
+        {"name":"阳极铝银色","price":399,"weight":379},
+        {"name":"阳极铝浅灰色","price":399,"weight":379},
+        {"name":"阳极铝大红色","price":399,"weight":379},
+        {"name":"阳极铝灰金","price":399,"weight":379},
+        {"name":"涂层N9","price":399,"weight":379},
+        {"name":"电泳白","price":399,"weight":379},
+        {"name":"RAW","price":399,"weight":379}
+      ],
+      "bottom_case":[
+        {"name":"阳极铝黑色","price":258.4,"weight":829},
+        {"name":"阳极铝银色","price":258.4,"weight":829},
+        {"name":"阳极铝灰色","price":258.4,"weight":829},
+        {"name":"阳极铝大红色","price":258.4,"weight":829},
+        {"name":"RAW","price":258.4,"weight":829},
+        {"name":"不锈钢","price":1700,"weight":2487},
+        {"name":"红铜","price":955,"weight":2736},
+        {"name":"阳极铝黑色刀纹","price":389,"weight":829},
+        {"name":"阳极铝银色刀纹","price":389,"weight":829}
+      ],
+      "inner_plate":[
+        {"name":"胡桃木","price":36,"weight":3},
+        {"name":"PC","price":36,"weight":12}
+      ],
+      "weight_block":[
+        {"name":"不锈钢","price":378,"weight":1772},
+        {"name":"红铜","price":560,"weight":1950},
+        {"name":"铝","price":180,"weight":600},
+        {"name":"不需要","price":0,"weight":0}
+      ],
+      "palm_rest":[
+        {"name":"黑色","price":400,"weight":877},
+        {"name":"银色","price":400,"weight":877},
+        {"name":"PC","price":400,"weight":550},
+        {"name":"不需要","price":0,"weight":0}
+      ],
+      "pcb":[
+        {"name":"焊接单模","price":159,"weight":100},
+        {"name":"热插拔单模","price":190,"weight":120},
+        {"name":"热插拔双模","price":270,"weight":120},
+        {"name":"磁轴","price":300,"weight":110},
+        {"name":"不需要","price":0,"weight":0}
+      ],
+      "plate":[
+        {"name":"碳纤维","price":159,"weight":41},
+        {"name":"PC","price":99,"weight":41},
+        {"name":"阳极铝","price":99,"weight":81},
+        {"name":"不需要","price":0,"weight":0}
+      ]
+    };
+
+    const container = document.getElementById('config');
+    const totalPriceEl = document.getElementById('totalPrice');
+    const totalWeightEl = document.getElementById('totalWeight');
+
+    function createSelect(labelText, key) {
+      const label = document.createElement('label');
+      label.textContent = labelText;
+
+      const select = document.createElement('select');
+      select.name = key;
+
+      configData[key].forEach(opt => {
+        const option = document.createElement('option');
+        option.value = opt.name;
+        option.textContent = `${opt.name} - ¥${opt.price}`;
+        option.dataset.price = opt.price;
+        option.dataset.weight = opt.weight;
+        select.appendChild(option);
+      });
+
+      select.addEventListener('change', updateTotal);
+      label.appendChild(select);
+      container.appendChild(label);
     }
-  ],
-  "bottom_case": [
-    {
-      "name": "阳极铝黑色",
-      "price": 258.4,
-      "weight": 829.0
-    },
-    {
-      "name": "阳极铝银色",
-      "price": 258.4,
-      "weight": 829.0
-    },
-    {
-      "name": "阳极铝灰色",
-      "price": 258.4,
-      "weight": 829.0
-    },
-    {
-      "name": "阳极铝大红色",
-      "price": 258.4,
-      "weight": 829.0
-    },
-    {
-      "name": "RAW",
-      "price": 258.4,
-      "weight": 829.0
-    },
-    {
-      "name": "涂层N9",
-      "price": 258.4,
-      "weight": 829.0
-    },
-    {
-      "name": "不锈钢",
-      "price": 1700.0,
-      "weight": 2487.0
-    },
-    {
-      "name": "红铜",
-      "price": 955.0,
-      "weight": 2736.0
-    },
-    {
-      "name": "阳极铝黑色刀纹",
-      "price": 389.0,
-      "weight": 829.0
-    },
-    {
-      "name": "阳极铝银色刀纹",
-      "price": 389.0,
-      "weight": 829.0
+
+    function updateTotal() {
+      let total = 0;
+      let weight = 0;
+
+      document.querySelectorAll('select').forEach(select => {
+        const selected = select.options[select.selectedIndex];
+        total += parseFloat(selected.dataset.price || 0);
+        weight += parseFloat(selected.dataset.weight || 0);
+      });
+
+      totalPriceEl.textContent = '¥' + total.toFixed(2);
+      totalWeightEl.textContent = weight.toFixed(0) + 'g';
     }
-  ],
-  "inner_plate": [
-    {
-      "name": "胡桃木",
-      "price": 36.0,
-      "weight": 3.0
-    },
-    {
-      "name": "PC",
-      "price": 36.0,
-      "weight": 12.0
-    }
-  ],
-  "weight_block": [
-    {
-      "name": "不锈钢",
-      "price": 378.0,
-      "weight": 1772.0
-    },
-    {
-      "name": "红铜",
-      "price": 560.0,
-      "weight": 1950.0
-    },
-    {
-      "name": "铝",
-      "price": 180.0,
-      "weight": 600.0
-    },
-    {
-      "name": "不需要",
-      "price": 0.0,
-      "weight": 0.0
-    }
-  ],
-  "palm_rest": [
-    {
-      "name": "黑色",
-      "price": 400.0,
-      "weight": 877.0
-    },
-    {
-      "name": "银色",
-      "price": 400.0,
-      "weight": 877.0
-    },
-    {
-      "name": "PC",
-      "price": 400.0,
-      "weight": 550.0
-    },
-    {
-      "name": "不需要",
-      "price": 0.0,
-      "weight": 0.0
-    }
-  ],
-  "pcb": [
-    {
-      "name": "焊接单模",
-      "price": 150.0,
-      "weight": 100.0
-    },
-    {
-      "name": "热插拔单模",
-      "price": 150.0,
-      "weight": 120.0
-    },
-    {
-      "name": "热插拔双模",
-      "price": 270.0,
-      "weight": 120.0
-    },
-    {
-      "name": "磁轴",
-      "price": 300.0,
-      "weight": 110.0
-    },
-    {
-      "name": "不需要",
-      "price": 0.0,
-      "weight": 0.0
-    }
-  ],
-  "plate": [
-    {
-      "name": "碳纤维",
-      "price": 99.0,
-      "weight": 41.0
-    },
-    {
-      "name": "PC",
-      "price": 99.0,
-      "weight": 41.0
-    },
-    {
-      "name": "阳极铝",
-      "price": 99.0,
-      "weight": 81.0
-    },
-    {
-      "name": "不需要",
-      "price": 0.0,
-      "weight": 0.0
-    }
-  ]
-};
-        const container = document.getElementById('config');
-        const totalPriceEl = document.getElementById('totalPrice');
-        const totalWeightEl = document.getElementById('totalWeight');
 
-        function createSelect(labelText, key) {
-            const label = document.createElement('label');
-            label.textContent = labelText;
+    const labels = {
+      top_case: '上壳',
+      bottom_case: '下壳',
+      inner_plate: '内盖板',
+      weight_block: '配重',
+      palm_rest: '手托',
+      pcb: 'PCB',
+      plate: '定位板'
+    };
 
-            const select = document.createElement('select');
-            select.name = key;
+    Object.keys(configData).forEach(key => {
+      createSelect(labels[key], key);
+    });
 
-            configData[key].forEach(opt => {
-                const option = document.createElement('option');
-                option.value = opt.name;
-                option.textContent = `${opt.name} - ¥${opt.price} - ${opt.weight}g`;
-                option.dataset.price = opt.price;
-                option.dataset.weight = opt.weight;
-                select.appendChild(option);
-            });
+    updateTotal();
+  </script>
 
-            select.addEventListener('change', updateTotal);
-            
-            // 默认选中“不需要”
-            for (let i = 0; i < select.options.length; i++) {
-                if (select.options[i].value === '不需要') {
-                    select.selectedIndex = i;
-                    break;
-                }
-            }
-
-            label.appendChild(select);
-            container.appendChild(label);
-        }
-
-        function updateTotal() {
-            let total = 0;
-            let weight = 0;
-
-            document.querySelectorAll('select').forEach(select => {
-                const selected = select.options[select.selectedIndex];
-                total += parseFloat(selected.dataset.price || 0);
-                weight += parseFloat(selected.dataset.weight || 0);
-            });
-
-            totalPriceEl.textContent = '¥' + total.toFixed(2);
-            totalWeightEl.textContent = weight.toFixed(0) + 'g';
-        }
-
-        const labels = {
-  "top_case": "上壳",
-  "bottom_case": "下壳",
-  "inner_plate": "内盖板",
-  "weight_block": "配重",
-  "pcb": "PCB",
-  "plate": "定位板",
-  "palm_rest": "手托"
-};
-
-        Object.keys(configData).forEach(key => {
-            createSelect(labels[key], key);
-        });
-
-        updateTotal();
-    </script>
+  <p style="text-align: center; margin-top: 40px;">
+    👉 <a href="https://shimo.im/docs/m4kMMmWOezC7XBkD/" target="_blank" style="color: red; text-decoration: underline;">
+      跳转到 Tofu TKL 详情页
+    </a>
+  </p>
 </body>
 </html>
