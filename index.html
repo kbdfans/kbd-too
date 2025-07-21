@@ -1,162 +1,854 @@
 
-
 <!DOCTYPE html>
-
-<html>
+<html lang="zh-CN">
 <head>
-<meta charset="utf-8"/>
-<title>键盘配置器 Demo</title>
-<style>
-    body { font-family: sans-serif; max-width: 700px; margin: 30px auto; background: #000; color: #fff; }
-    label, select { display: block; margin: 12px 0; font-size: 16px; color: #fff; }
-    select { background: #111; color: #fff; border: 1px solid #555; padding: 5px; }
-    .result { margin-top: 20px; padding: 15px; background: #111; border: 1px solid #333; }
-    .result span { color: red; font-weight: bold; }
-  </style>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/></head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOFU TKL 配置器模拟器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-bg: #ffffff;
+            --secondary-bg: #f5f5f7;
+            --text-color: #1d1d1f;
+            --border-color: #d2d2d7;
+            --primary-color: #0071e3;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            --transition: all 0.3s ease;
+            --card-radius: 18px;
+        }
+
+        .dark-mode {
+            --primary-bg: #1d1d1f;
+            --secondary-bg: #2c2c2e;
+            --text-color: #f5f5f7;
+            --border-color: #424245;
+            --primary-color: #2997ff;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            transition: var(--transition);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo i {
+            color: var(--primary-color);
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .control-btn {
+            background: var(--primary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            padding: 10px 18px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: var(--text-color);
+            transition: var(--transition);
+        }
+
+        .control-btn:hover {
+            background: var(--secondary-bg);
+            transform: translateY(-2px);
+        }
+
+        .main-content {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .configurator, .summary {
+            background: var(--primary-bg);
+            border-radius: var(--card-radius);
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary-color);
+        }
+
+        .component {
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .component:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .component-title {
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .select-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select {
+            width: 100%;
+            padding: 14px 50px 14px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            appearance: none;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .custom-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+        }
+
+        .custom-select:hover {
+            border-color: #a1a1a6;
+        }
+
+        .select-arrow {
+            position: absolute;
+            top: 50%;
+            right: 16px;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #86868b;
+        }
+
+        .dark-mode .select-arrow {
+            color: #a1a1a6;
+        }
+
+        .option-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        .dark-mode .option-info {
+            color: #a1a1a6;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .total {
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .price {
+            font-weight: 600;
+        }
+
+        .currency-switcher {
+            font-size: 14px;
+            margin-left: 5px;
+            color: #86868b;
+        }
+
+        .dark-mode .currency-switcher {
+            color: #a1a1a6;
+        }
+
+        .keyboard-image {
+            width: 100%;
+            height: 220px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #e0e0e0, #f0f0f0);
+        }
+
+        .dark-mode .keyboard-image {
+            background: linear-gradient(135deg, #2a2a2c, #3a3a3c);
+        }
+
+        .keyboard-image img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+        }
+
+        .copy-link {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 20px;
+            transition: var(--transition);
+        }
+
+        .copy-link:hover {
+            background: #0077ed;
+            transform: translateY(-2px);
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #34c759;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #86868b;
+            font-size: 14px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .dark-mode footer {
+            color: #a1a1a6;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .configurator, .summary {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .control-btn {
+                flex: 1;
+                justify-content: center;
+                padding: 8px 12px;
+            }
+            
+            .section-title {
+                font-size: 20px;
+            }
+            
+            .logo {
+                font-size: 24px;
+            }
+            
+            .keyboard-image {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
 <body>
-<h2>TOFU TKL模拟器</h2>
-<div style="margin-top: 20px;">
-<button onclick="toggleLanguage()" style="margin-right: 15px;">🌐 切换语言 / Language</button>
-<button onclick="toggleCurrency()">💱 USD/CNY</button>
-<button onclick="generateConfigLink()" style="margin-left:15px">🔗 复制配置链接</button></div>
-<div id="config"></div>
-<div class="result">
-<p><strong>总价：</strong><span id="totalPrice">¥0.00</span></p>
-<p><strong>总重量：</strong><span id="totalWeight">0g</span></p>
-</div>
-<script>
-    const exchangeRate = 7.15;
-    const configData = {"top_case": [{"name": "阳极铝黑色", "name_en": "Anodized Black", "price": 399, "weight": 379}, {"name": "阳极铝银色", "name_en": "Anodized Silver", "price": 399, "weight": 379}, {"name": "阳极铝浅灰色", "name_en": "Anodized Light Gray", "price": 399, "weight": 379}, {"name": "阳极铝大红色", "name_en": "Anodized Red", "price": 399, "weight": 379}, {"name": "阳极铝灰金", "name_en": "Anodized Champagne Gray", "price": 399, "weight": 379}, {"name": "涂层N9", "name_en": "Coated N9", "price": 399, "weight": 379}, {"name": "电泳白", "name_en": "E-White", "price": 399, "weight": 379}, {"name": "RAW", "name_en": "RAW", "price": 399, "weight": 379}], "bottom_case": [{"name": "阳极铝黑色", "name_en": "Anodized Black", "price": 258.4, "weight": 829}, {"name": "阳极铝银色", "name_en": "Anodized Silver", "price": 258.4, "weight": 829}, {"name": "阳极铝灰色", "name_en": "Anodized Gray", "price": 258.4, "weight": 829}, {"name": "阳极铝大红色", "name_en": "Anodized Red", "price": 258.4, "weight": 829}, {"name": "RAW", "name_en": "RAW", "price": 258.4, "weight": 829}, {"name": "不锈钢", "name_en": "Stainless Steel", "price": 1700, "weight": 2487}, {"name": "红铜", "name_en": "Copper", "price": 955, "weight": 2736}, {"name": "阳极铝黑色刀纹", "name_en": "Anodized Black Brushed", "price": 389, "weight": 829}, {"name": "阳极铝银色刀纹", "name_en": "Anodized Silver Brushed", "price": 389, "weight": 829}], "inner_plate": [{"name": "胡桃木", "name_en": "Walnut", "price": 36, "weight": 3}, {"name": "PC", "name_en": "PC", "price": 36, "weight": 12}], "weight_block": [{"name": "不锈钢", "name_en": "Stainless Steel", "price": 378, "weight": 1772}, {"name": "红铜", "name_en": "Copper", "price": 560, "weight": 1950}, {"name": "铝", "name_en": "Aluminum", "price": 180, "weight": 600}, {"name": "不需要", "name_en": "None", "price": 0, "weight": 0}], "palm_rest": [{"name": "黑色", "name_en": "Black", "price": 400, "weight": 877}, {"name": "银色", "name_en": "Silver", "price": 400, "weight": 877}, {"name": "PC", "name_en": "PC", "price": 400, "weight": 550}, {"name": "不需要", "name_en": "None", "price": 0, "weight": 0}], "pcb": [{"name": "焊接单模", "name_en": "Soldered (Wired)", "price": 159, "weight": 100}, {"name": "热插拔单模", "name_en": "Hot-swap (Wired)", "price": 199, "weight": 120}, {"name": "热插拔双模", "name_en": "Hot-swap (Dual Mode)", "price": 270, "weight": 120}, {"name": "磁轴", "name_en": "Tofu HE", "price": 300, "weight": 110}, {"name": "不需要", "name_en": "None", "price": 0, "weight": 0}], "plate": [{"name": "碳纤维", "name_en": "Carbon Fiber", "price": 159, "weight": 41}, {"name": "PC", "name_en": "PC", "price": 99, "weight": 41}, {"name": "阳极铝", "name_en": "Anodized Aluminum", "price": 99, "weight": 81}, {"name": "不需要", "name_en": "None", "price": 0, "weight": 0}]};
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-keyboard"></i>
+                <span class="en">TOFU TKL Configurator</span>
+                <span class="zh">TOFU TKL 配置器</span>
+            </div>
+            <div class="controls">
+                <button id="lang-toggle" class="control-btn">
+                    <i class="fas fa-language"></i>
+                    <span class="en">中文</span>
+                    <span class="zh">English</span>
+                </button>
+                <button id="currency-toggle" class="control-btn">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span class="en">切换美元</span>
+                    <span class="zh">Switch to USD</span>
+                </button>
+                <button id="theme-toggle" class="control-btn">
+                    <i class="fas fa-moon"></i>
+                    <span class="en">暗黑模式</span>
+                    <span class="zh">Dark Mode</span>
+                </button>
+            </div>
+        </header>
 
-//"top_case": [{"name": "阳极铝黑色", "price": 399, "weight": 379}, {"name": "阳极铝银色", "price": 399, "weight": 379}, {"name": "阳极铝浅灰色", "price": 399, "weight": 379}, {"name": "阳极铝大红色", "price": 399, "weight": 379}, {"name": "阳极铝灰金", "price": 399, "weight": 379}, {"name": "涂层N9", "price": 399, "weight": 379}, {"name": "电泳白", "price": 399, "weight": 379}, {"name": "RAW", "price": 399, "weight": 379}], "bottom_case": [{"name": "阳极铝黑色", "price": 258.4, "weight": 829}, {"name": "阳极铝银色", "price": 258.4, "weight": 829}, {"name": "阳极铝灰色", "price": 258.4, "weight": 829}, {"name": "阳极铝大红色", "price": 258.4, "weight": 829}, {"name": "RAW", "price": 258.4, "weight": 829}, {"name": "不锈钢", "price": 1700, "weight": 2487}, {"name": "红铜", "price": 955, "weight": 2736}, {"name": "阳极铝黑色刀纹", "price": 389, "weight": 829}, {"name": "阳极铝银色刀纹", "price": 389, "weight": 829}], "inner_plate": [{"name": "胡桃木", "price": 36, "weight": 3}, {"name": "PC", "price": 36, "weight": 12}], "weight_block": [{"name": "不锈钢", "price": 378, "weight": 1772}, {"name": "红铜", "price": 560, "weight": 1950}, {"name": "铝", "price": 180, "weight": 600}, {"name": "不需要", "price": 0, "weight": 0}], "palm_rest": [{"name": "黑色", "price": 400, "weight": 877}, {"name": "银色", "price": 400, "weight": 877}, {"name": "PC", "price": 400, "weight": 550}, {"name": "不需要", "price": 0, "weight": 0}], "pcb": [{"name": "焊接单模", "price": 159, "weight": 100}, {"name": "热插拔单模", "price": 199, "weight": 120}, {"name": "热插拔双模", "price": 270, "weight": 120}, {"name": "磁轴", "price": 300, "weight": 110}, {"name": "不需要", "price": 0, "weight": 0}], "plate": [{"name": "碳纤维", "price": 159, "weight": 41}, {"name": "PC", "price": 99, "weight": 41}, {"name": "阳极铝", "price": 99, "weight": 81}, {"name": "不需要", "price": 0, "weight": 0}]};
+        <div class="main-content">
+            <div class="configurator">
+                <div class="section-title">
+                    <i class="fas fa-sliders-h"></i>
+                    <span class="en">Configuration Options</span>
+                    <span class="zh">配置选项</span>
+                </div>
+                
+                <div class="component">
+                    <div class="component-title">
+                        <i class="fas fa-cube"></i>
+                        <span class="en">Top Case</span>
+                        <span class="zh">上壳</span>
+                    </div>
+                    <div class="select-container">
+                        <select class="custom-select" id="top-case-select">
+                            <!-- Options will be dynamically added -->
+                        </select>
+                        <div class="select-arrow">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="option-info" id="top-case-info"></div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-title">
+                        <i class="fas fa-cube"></i>
+                        <span class="en">Bottom Case</span>
+                        <span class="zh">下壳</span>
+                    </div>
+                    <div class="select-container">
+                        <select class="custom-select" id="bottom-case-select">
+                            <!-- Options will be dynamically added -->
+                        </select>
+                        <div class="select-arrow">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="option-info" id="bottom-case-info"></div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-title">
+                        <i class="fas fa-border-style"></i>
+                        <span class="en">Inner Plate</span>
+                        <span class="zh">内盖板</span>
+                    </div>
+                    <div class="select-container">
+                        <select class="custom-select" id="inner-plate-select">
+                            <!-- Options will be dynamically added -->
+                        </select>
+                        <div class="select-arrow">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="option-info" id="inner-plate-info"></div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-title">
+                        <i class="fas fa-weight-hanging"></i>
+                        <span class="en">Weight</span>
+                        <span class="zh">配重</span>
+                    </div>
+                    <div class="select-container">
+                        <select class="custom-select" id="weight-select">
+                            <!-- Options will be dynamically added -->
+                        </select>
+                        <div class="select-arrow">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="option-info" id="weight-info"></div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-title">
+                        <i class="fas fa-hand-paper"></i>
+                        <span class="en">Wrist Rest</span>
+                        <span class="zh">手托</span>
+                    </div>
+                    <div class="select-container">
+                        <select class="custom-select" id="wrist-rest-select">
+                            <!-- Options will be dynamically added -->
+                        </select>
+                        <div class="select-arrow">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="option-info" id="wrist-rest-info"></div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-title">
+                        <i class="fas fa-microchip"></i>
+                        <span class="en">PCB</span>
+                        <span class="zh">PCB</span>
+                    </div>
+                    <div class="select-container">
+                        <select class="custom-select" id="pcb-select">
+                            <!-- Options will be dynamically added -->
+                        </select>
+                        <div class="select-arrow">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="option-info" id="pcb-info"></div>
+                </div>
+                
+                <div class="component">
+                    <div class="component-title">
+                        <i class="fas fa-th"></i>
+                        <span class="en">Plate</span>
+                        <span class="zh">定位板</span>
+                    </div>
+                    <div class="select-container">
+                        <select class="custom-select" id="plate-select">
+                            <!-- Options will be dynamically added -->
+                        </select>
+                        <div class="select-arrow">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="option-info" id="plate-info"></div>
+                </div>
+            </div>
 
-    const container = document.getElementById('config');
-    const totalPriceEl = document.getElementById('totalPrice');
-    const totalWeightEl = document.getElementById('totalWeight');
+            <div class="summary">
+                <div class="section-title">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span class="en">Configuration Summary</span>
+                    <span class="zh">配置摘要</span>
+                </div>
+                
+                <div id="summary-items">
+                    <!-- Summary items will be dynamically added here -->
+                </div>
+                
+                <div class="summary-item total">
+                    <span class="en">Total</span>
+                    <span class="zh">总计</span>
+                    <div>
+                        <span id="total-price">¥0</span>
+                        <span class="currency-switcher en">(¥)</span>
+                        <span class="currency-switcher zh">(USD)</span>
+                    </div>
+                </div>
+                
+                <div class="summary-item">
+                    <span class="en">Total Weight</span>
+                    <span class="zh">总重量</span>
+                    <span id="total-weight">0g</span>
+                </div>
+                
+                <button id="copy-link" class="copy-link">
+                    <i class="fas fa-link"></i>
+                    <span class="en">Copy Configuration Link</span>
+                    <span class="zh">复制配置链接</span>
+                </button>
+            </div>
+        </div>
+        
+        <div id="notification" class="notification">
+            <i class="fas fa-check-circle"></i>
+            <span class="en">Link copied to clipboard!</span>
+            <span class="zh">链接已复制到剪贴板！</span>
+        </div>
+        
+        <footer>
+            <p class="en">TOFU TKL Configurator Simulator © 2023</p>
+            <p class="zh">TOFU TKL 配置器模拟器 © 2023</p>
+        </footer>
+    </div>
 
-    let currentLang = 'zh';
-    let currentCurrency = 'CNY';
+    <script>
+        // Keyboard component data
+        const components = {
+            topCase: [
+                { name: "阳极铝黑色", nameEn: "Anodized Aluminum Black", price: 399, weight: 379 },
+                { name: "阳极铝银色", nameEn: "Anodized Aluminum Silver", price: 399, weight: 379 },
+                { name: "阳极铝浅灰色", nameEn: "Anodized Aluminum Light Gray", price: 399, weight: 379 },
+                { name: "阳极铝大红色", nameEn: "Anodized Aluminum Bright Red", price: 399, weight: 379 },
+                { name: "阳极铝灰金", nameEn: "Anodized Aluminum Gray Gold", price: 399, weight: 379 },
+                { name: "涂层N9", nameEn: "Coating N9", price: 399, weight: 379 },
+                { name: "电泳白", nameEn: "Electrophoresis White", price: 399, weight: 379 },
+                { name: "RAW", nameEn: "RAW", price: 399, weight: 379 }
+            ],
+            bottomCase: [
+                { name: "阳极铝黑色", nameEn: "Anodized Aluminum Black", price: 304, weight: 829 },
+                { name: "阳极铝银色", nameEn: "Anodized Aluminum Silver", price: 304, weight: 829 },
+                { name: "阳极铝灰色", nameEn: "Anodized Aluminum Gray", price: 304, weight: 829 },
+                { name: "阳极铝大红色", nameEn: "Anodized Aluminum Bright Red", price: 304, weight: 829 },
+                { name: "RAW", nameEn: "RAW", price: 304, weight: 829 },
+                { name: "涂层N9", nameEn: "Coating N9", price: 304, weight: 829 },
+                { name: "不锈钢", nameEn: "Stainless Steel", price: 1700, weight: 2487 },
+                { name: "红铜", nameEn: "Red Copper", price: 1050, weight: 2736 },
+                { name: "阳极铝黑色刀纹", nameEn: "Anodized Aluminum Black (Knife Pattern)", price: 389, weight: 829 },
+                { name: "阳极铝银色刀纹", nameEn: "Anodized Aluminum Silver (Knife Pattern)", price: 389, weight: 829 }
+            ],
+            innerPlate: [
+                { name: "胡桃木", nameEn: "Walnut", price: 36, weight: 3 },
+                { name: "PC", nameEn: "PC", price: 36, weight: 12 },
+                { name: "不需要", nameEn: "Not Needed", price: 0, weight: 0 }
+            ],
+            weight: [
+                { name: "不锈钢", nameEn: "Stainless Steel", price: 378, weight: 1772 },
+                { name: "红铜", nameEn: "Red Copper", price: 560, weight: 1950 },
+                { name: "铝", nameEn: "Aluminum", price: 180, weight: 600 },
+                { name: "不需要", nameEn: "Not Needed", price: 0, weight: 0 }
+            ],
+            wristRest: [
+                { name: "黑色", nameEn: "Black", price: 400, weight: 877 },
+                { name: "银色", nameEn: "Silver", price: 400, weight: 877 },
+                { name: "PC", nameEn: "PC", price: 400, weight: 550 },
+                { name: "不需要", nameEn: "Not Needed", price: 0, weight: 0 }
+            ],
+            pcb: [
+                { name: "焊接单模", nameEn: "Soldered Single Mode", price: 159, weight: 100 },
+                { name: "热插拔单模", nameEn: "Hot-Swappable Single Mode", price: 199, weight: 120 },
+                { name: "热插拔双模", nameEn: "Hot-Swappable Dual Mode", price: 270, weight: 120 },
+                { name: "磁轴", nameEn: "Magnetic Switch", price: 349, weight: 110 },
+                { name: "不需要", nameEn: "Not Needed", price: 0, weight: 0 }
+            ],
+            plate: [
+                { name: "碳纤维", nameEn: "Carbon Fiber", price: 159, weight: 41 },
+                { name: "PC", nameEn: "PC", price: 99, weight: 41 },
+                { name: "阳极铝", nameEn: "Anodized Aluminum", price: 99, weight: 81 },
+                { name: "不需要", nameEn: "Not Needed", price: 0, weight: 0 }
+            ]
+        };
 
-    const translations = {
-      zh: {
-        top_case: '上壳',
-        bottom_case: '下壳',
-        inner_plate: '内盖板',
-        weight_block: '配重',
-        palm_rest: '手托',
-        pcb: 'PCB',
-        plate: '定位板'
-      },
-      en: {
-        top_case: 'Top Case',
-        bottom_case: 'Bottom Case',
-        inner_plate: 'Inner Plate',
-        weight_block: 'Weight Block',
-        palm_rest: 'Palm Rest',
-        pcb: 'PCB',
-        plate: 'Plate'
-      }
-    };
+        // App state
+        const state = {
+            selected: {
+                topCase: 0,
+                bottomCase: 0,
+                innerPlate: 0,
+                weight: 0,
+                wristRest: 0,
+                pcb: 0,
+                plate: 0
+            },
+            currency: 'CNY', // 'CNY' or 'USD'
+            language: 'zh', // 'zh' or 'en'
+            darkMode: false
+        };
 
-    function toggleLanguage() {
-      currentLang = currentLang === 'zh' ? 'en' : 'zh';
-      container.innerHTML = '';
-      Object.keys(configData).forEach(key => {
-        createSelect(translations[currentLang][key], key);
-      });
-      updateTotal();
-    }
+        // Initialize the app
+        function initApp() {
+            renderComponents();
+            updateSummary();
+            setupEventListeners();
+            updateLanguageUI();
+            updateCurrencyUI();
+        }
 
-    function toggleCurrency() {
-      currentCurrency = currentCurrency === 'CNY' ? 'USD' : 'CNY';
-      updateTotal();
-    }
+        // Render all components
+        function renderComponents() {
+            renderComponent('topCase', 'top-case-select', 'top-case-info');
+            renderComponent('bottomCase', 'bottom-case-select', 'bottom-case-info');
+            renderComponent('innerPlate', 'inner-plate-select', 'inner-plate-info');
+            renderComponent('weight', 'weight-select', 'weight-info');
+            renderComponent('wristRest', 'wrist-rest-select', 'wrist-rest-info');
+            renderComponent('pcb', 'pcb-select', 'pcb-info');
+            renderComponent('plate', 'plate-select', 'plate-info');
+        }
 
-    function formatPrice(price) {
-      return currentCurrency === 'USD'
-        ? '$' + (price / exchangeRate).toFixed(2)
-        : '¥' + price.toFixed(2);
-    }
+        // Render a single component
+        function renderComponent(componentId, selectId, infoId) {
+            const select = document.getElementById(selectId);
+            const infoContainer = document.getElementById(infoId);
+            
+            // Clear previous options
+            select.innerHTML = '';
+            
+            // Add new options
+            components[componentId].forEach((item, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = state.language === 'en' ? item.nameEn : item.name;
+                select.appendChild(option);
+            });
+            
+            // Set selected option
+            select.value = state.selected[componentId];
+            
+            // Update info display
+            updateOptionInfo(componentId, infoId);
+            
+            // Add event listener
+            select.addEventListener('change', () => {
+                state.selected[componentId] = parseInt(select.value);
+                updateOptionInfo(componentId, infoId);
+                updateSummary();
+            });
+        }
 
-    function createSelect(labelText, key) {
-      const label = document.createElement('label');
-      label.textContent = labelText;
+        // Update option info display
+        function updateOptionInfo(componentId, infoId) {
+            const index = state.selected[componentId];
+            const item = components[componentId][index];
+            const infoContainer = document.getElementById(infoId);
+            
+            const price = state.currency === 'CNY' ? `¥${item.price}` : `$${(item.price / 7.3).toFixed(2)}`;
+            const weight = `${item.weight}g`;
+            
+            infoContainer.textContent = `${price} • ${weight}`;
+        }
 
-      const select = document.createElement('select');
-      select.name = key;
+        // Update the summary section
+        function updateSummary() {
+            const summaryItems = document.getElementById('summary-items');
+            summaryItems.innerHTML = '';
+            
+            let totalPrice = 0;
+            let totalWeight = 0;
+            
+            Object.keys(state.selected).forEach(componentId => {
+                const index = state.selected[componentId];
+                if (index !== null) {
+                    const item = components[componentId][index];
+                    totalPrice += item.price;
+                    totalWeight += item.weight;
+                    
+                    const summaryItem = document.createElement('div');
+                    summaryItem.className = 'summary-item';
+                    
+                    const name = state.language === 'en' ? 
+                        getComponentNameEn(componentId) : 
+                        getComponentNameZh(componentId);
+                    
+                    const itemName = state.language === 'en' ? item.nameEn : item.name;
+                    const price = state.currency === 'CNY' ? `¥${item.price}` : `$${(item.price / 7.3).toFixed(2)}`;
+                    
+                    summaryItem.innerHTML = `
+                        <div>
+                            <strong>${name}:</strong> ${itemName}
+                        </div>
+                        <div>${price}</div>
+                    `;
+                    
+                    summaryItems.appendChild(summaryItem);
+                }
+            });
+            
+            // Update totals
+            const totalPriceElement = document.getElementById('total-price');
+            if (state.currency === 'CNY') {
+                totalPriceElement.textContent = `¥${totalPrice}`;
+            } else {
+                totalPriceElement.textContent = `$${(totalPrice / 7.3).toFixed(2)}`;
+            }
+            
+            document.getElementById('total-weight').textContent = `${totalWeight}g`;
+        }
 
-      configData[key].forEach(opt => {
-        const option = document.createElement('option');
-        option.value = opt.name;
-        option.textContent = `${currentLang === 'zh' ? opt.name : opt.name_en} - ${formatPrice(opt.price)}`;
-        option.dataset.price = opt.price;
-        option.dataset.weight = opt.weight;
-        select.appendChild(option);
-      });
+        // Get component name in Chinese
+        function getComponentNameZh(componentId) {
+            const names = {
+                topCase: '上壳',
+                bottomCase: '下壳',
+                innerPlate: '内盖板',
+                weight: '配重',
+                wristRest: '手托',
+                pcb: 'PCB',
+                plate: '定位板'
+            };
+            return names[componentId];
+        }
 
-      select.addEventListener('change', updateTotal);
-      label.appendChild(select);
-      container.appendChild(label);
-    }
+        // Get component name in English
+        function getComponentNameEn(componentId) {
+            const names = {
+                topCase: 'Top Case',
+                bottomCase: 'Bottom Case',
+                innerPlate: 'Inner Plate',
+                weight: 'Weight',
+                wristRest: 'Wrist Rest',
+                pcb: 'PCB',
+                plate: 'Plate'
+            };
+            return names[componentId];
+        }
 
-    function updateTotal() {
-      let total = 0;
-      let weight = 0;
+        // Toggle language
+        function toggleLanguage() {
+            state.language = state.language === 'zh' ? 'en' : 'zh';
+            updateLanguageUI();
+            renderComponents();
+            updateSummary();
+        }
 
-      document.querySelectorAll('select').forEach(select => {
-        const selected = select.options[select.selectedIndex];
-        total += parseFloat(selected.dataset.price || 0);
-        weight += parseFloat(selected.dataset.weight || 0);
-      });
+        // Update language UI
+        function updateLanguageUI() {
+            const zhElements = document.querySelectorAll('.zh');
+            const enElements = document.querySelectorAll('.en');
+            
+            if (state.language === 'zh') {
+                zhElements.forEach(el => el.style.display = 'inline');
+                enElements.forEach(el => el.style.display = 'none');
+            } else {
+                zhElements.forEach(el => el.style.display = 'none');
+                enElements.forEach(el => el.style.display = 'inline');
+            }
+        }
 
-      totalPriceEl.textContent = formatPrice(total);
-      totalWeightEl.textContent = weight.toFixed(0) + 'g';
-    }
+        // Toggle currency
+        function toggleCurrency() {
+            state.currency = state.currency === 'CNY' ? 'USD' : 'CNY';
+            updateCurrencyUI();
+            renderComponents();
+            updateSummary();
+        }
 
-    const labels = {
-      top_case: '上壳',
-      bottom_case: '下壳',
-      inner_plate: '内盖板',
-      weight_block: '配重',
-      palm_rest: '手托',
-      pcb: 'PCB',
-      plate: '定位板'
-    };
+        // Update currency UI
+        function updateCurrencyUI() {
+            const cnyElements = document.querySelectorAll('.currency-switcher.zh');
+            const usdElements = document.querySelectorAll('.currency-switcher.en');
+            
+            if (state.currency === 'CNY') {
+                cnyElements.forEach(el => el.style.display = 'none');
+                usdElements.forEach(el => el.style.display = 'inline');
+            } else {
+                cnyElements.forEach(el => el.style.display = 'inline');
+                usdElements.forEach(el => el.style.display = 'none');
+            }
+        }
 
-    Object.keys(configData).forEach(key => {
-      createSelect(labels[key], key);
-    });
+        // Toggle dark mode
+        function toggleDarkMode() {
+            state.darkMode = !state.darkMode;
+            if (state.darkMode) {
+                document.body.classList.add('dark-mode');
+                document.getElementById('theme-toggle').innerHTML = '<i class="fas fa-sun"></i><span class="en">亮色模式</span><span class="zh">Light Mode</span>';
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.getElementById('theme-toggle').innerHTML = '<i class="fas fa-moon"></i><span class="en">暗黑模式</span><span class="zh">Dark Mode</span>';
+            }
+        }
 
-    updateTotal();
-  </script>
-<p style="text-align: center; margin-top: 40px;">
-    👉 <a href="https://shimo.im/docs/m4kMMmWOezC7XBkD/" style="color: red; text-decoration: underline;" target="_blank">
-      跳转到 Tofu TKL 详情页
-    </a>
-</p>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><input id="configLink" readonly="True" style="margin-top:15px; width:100%; font-size:14px; padding:6px; background:#222; color:#0f0; border:1px solid #555;" type="text"/><script>
-function generateConfigLink() {
-  const params = new URLSearchParams();
-  document.querySelectorAll('select').forEach(select => {
-    params.set(select.name, select.value);
-  });
-  const baseUrl = location.origin + location.pathname;
-  const fullUrl = baseUrl + '?' + params.toString();
-  const input = document.getElementById("configLink");
-  input.value = fullUrl;
-  input.select();
-  document.execCommand("copy");
-  alert("配置链接已复制！");
-}
+        // Show notification
+        function showNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
 
-window.addEventListener("DOMContentLoaded", () => {
-  const urlParams = new URLSearchParams(location.search);
-  urlParams.forEach((value, key) => {
-    const select = document.querySelector(`select[name="${key}"]`);
-    if (select) select.value = value;
-  });
-  updateTotal();
-});
-</script></body>
+        // Copy configuration link
+        function copyConfigurationLink() {
+            const configString = JSON.stringify(state.selected);
+            const base64Config = btoa(configString);
+            const url = `${window.location.origin}${window.location.pathname}?config=${base64Config}`;
+            
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification();
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('lang-toggle').addEventListener('click', toggleLanguage);
+            document.getElementById('currency-toggle').addEventListener('click', toggleCurrency);
+            document.getElementById('theme-toggle').addEventListener('click', toggleDarkMode);
+            document.getElementById('copy-link').addEventListener('click', copyConfigurationLink);
+        }
+
+        // Initialize the app when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
 </html>
