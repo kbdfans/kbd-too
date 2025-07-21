@@ -1,12 +1,13 @@
 
 <!DOCTYPE html>
+
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOFU TKL 配置器模拟器</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TOFU TKL 配置器模拟器</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<style>
         :root {
             --primary-bg: #ffffff;
             --secondary-bg: #f5f5f7;
@@ -348,211 +349,197 @@
                 height: 180px;
             }
         }
-    </style>
+    
+.option-info { display: none !important; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div class="logo">
-                <i class="fas fa-keyboard"></i>
-                <span class="en">TOFU TKL Configurator</span>
-                <span class="zh">TOFU TKL 配置器</span>
-            </div>
-            <div class="controls">
-                <button id="lang-toggle" class="control-btn">
-                    <i class="fas fa-language"></i>
-                    <span class="en">中文</span>
-                    <span class="zh">English</span>
-                </button>
-                <button id="currency-toggle" class="control-btn">
-                    <i class="fas fa-dollar-sign"></i>
-                    <span class="en">切换美元</span>
-                    <span class="zh">Switch to USD</span>
-                </button>
-                <button id="theme-toggle" class="control-btn">
-                    <i class="fas fa-moon"></i>
-                    <span class="en">暗黑模式</span>
-                    <span class="zh">Dark Mode</span>
-                </button>
-            </div>
-        </header>
-
-        <div class="main-content">
-            <div class="configurator">
-                <div class="section-title">
-                    <i class="fas fa-sliders-h"></i>
-                    <span class="en">Configuration Options</span>
-                    <span class="zh">配置选项</span>
-                </div>
-                
-                <div class="component">
-                    <div class="component-title">
-                        <i class="fas fa-cube"></i>
-                        <span class="en">Top Case</span>
-                        <span class="zh">上壳</span>
-                    </div>
-                    <div class="select-container">
-                        <select class="custom-select" id="top-case-select">
-                            <!-- Options will be dynamically added -->
-                        </select>
-                        <div class="select-arrow">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                    <div class="option-info" id="top-case-info"></div>
-                </div>
-                
-                <div class="component">
-                    <div class="component-title">
-                        <i class="fas fa-cube"></i>
-                        <span class="en">Bottom Case</span>
-                        <span class="zh">下壳</span>
-                    </div>
-                    <div class="select-container">
-                        <select class="custom-select" id="bottom-case-select">
-                            <!-- Options will be dynamically added -->
-                        </select>
-                        <div class="select-arrow">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                    <div class="option-info" id="bottom-case-info"></div>
-                </div>
-                
-                <div class="component">
-                    <div class="component-title">
-                        <i class="fas fa-border-style"></i>
-                        <span class="en">Inner Plate</span>
-                        <span class="zh">内盖板</span>
-                    </div>
-                    <div class="select-container">
-                        <select class="custom-select" id="inner-plate-select">
-                            <!-- Options will be dynamically added -->
-                        </select>
-                        <div class="select-arrow">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                    <div class="option-info" id="inner-plate-info"></div>
-                </div>
-                
-                <div class="component">
-                    <div class="component-title">
-                        <i class="fas fa-weight-hanging"></i>
-                        <span class="en">Weight</span>
-                        <span class="zh">配重</span>
-                    </div>
-                    <div class="select-container">
-                        <select class="custom-select" id="weight-select">
-                            <!-- Options will be dynamically added -->
-                        </select>
-                        <div class="select-arrow">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                    <div class="option-info" id="weight-info"></div>
-                </div>
-                
-                <div class="component">
-                    <div class="component-title">
-                        <i class="fas fa-hand-paper"></i>
-                        <span class="en">Wrist Rest</span>
-                        <span class="zh">手托</span>
-                    </div>
-                    <div class="select-container">
-                        <select class="custom-select" id="wrist-rest-select">
-                            <!-- Options will be dynamically added -->
-                        </select>
-                        <div class="select-arrow">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                    <div class="option-info" id="wrist-rest-info"></div>
-                </div>
-                
-                <div class="component">
-                    <div class="component-title">
-                        <i class="fas fa-microchip"></i>
-                        <span class="en">PCB</span>
-                        <span class="zh">PCB</span>
-                    </div>
-                    <div class="select-container">
-                        <select class="custom-select" id="pcb-select">
-                            <!-- Options will be dynamically added -->
-                        </select>
-                        <div class="select-arrow">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                    <div class="option-info" id="pcb-info"></div>
-                </div>
-                
-                <div class="component">
-                    <div class="component-title">
-                        <i class="fas fa-th"></i>
-                        <span class="en">Plate</span>
-                        <span class="zh">定位板</span>
-                    </div>
-                    <div class="select-container">
-                        <select class="custom-select" id="plate-select">
-                            <!-- Options will be dynamically added -->
-                        </select>
-                        <div class="select-arrow">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-                    <div class="option-info" id="plate-info"></div>
-                </div>
-            </div>
-
-            <div class="summary">
-                <div class="section-title">
-                    <i class="fas fa-clipboard-list"></i>
-                    <span class="en">Configuration Summary</span>
-                    <span class="zh">配置摘要</span>
-                </div>
-                
-                <div id="summary-items">
-                    <!-- Summary items will be dynamically added here -->
-                </div>
-                
-                <div class="summary-item total">
-                    <span class="en">Total</span>
-                    <span class="zh">总计</span>
-                    <div>
-                        <span id="total-price">¥0</span>
-                        <span class="currency-switcher en">(¥)</span>
-                        <span class="currency-switcher zh">(USD)</span>
-                    </div>
-                </div>
-                
-                <div class="summary-item">
-                    <span class="en">Total Weight</span>
-                    <span class="zh">总重量</span>
-                    <span id="total-weight">0g</span>
-                </div>
-                
-                <button id="copy-link" class="copy-link">
-                    <i class="fas fa-link"></i>
-                    <span class="en">Copy Configuration Link</span>
-                    <span class="zh">复制配置链接</span>
-                </button>
-            </div>
-        </div>
-        
-        <div id="notification" class="notification">
-            <i class="fas fa-check-circle"></i>
-            <span class="en">Link copied to clipboard!</span>
-            <span class="zh">链接已复制到剪贴板！</span>
-        </div>
-        
-        <footer>
-            <p class="en">TOFU TKL Configurator Simulator © 2023</p>
-            <p class="zh">TOFU TKL 配置器模拟器 © 2023</p>
-        </footer>
-    </div>
-
-    <script>
+<div class="container">
+<header>
+<div class="logo">
+<i class="fas fa-keyboard"></i>
+<span class="en">TOFU TKL Configurator</span>
+<span class="zh">TOFU TKL 配置器</span>
+</div>
+<div class="controls">
+<button class="control-btn" id="lang-toggle">
+<i class="fas fa-language"></i>
+<span class="en">中文</span>
+<span class="zh">English</span>
+</button>
+<button class="control-btn" id="currency-toggle">
+<i class="fas fa-dollar-sign"></i>
+<span class="en">切换美元</span>
+<span class="zh">Switch to USD</span>
+</button>
+<button class="control-btn" id="theme-toggle">
+<i class="fas fa-moon"></i>
+<span class="en">暗黑模式</span>
+<span class="zh">Dark Mode</span>
+</button>
+</div>
+</header>
+<div class="main-content">
+<div class="configurator">
+<div class="section-title">
+<i class="fas fa-sliders-h"></i>
+<span class="en">Configuration Options</span>
+<span class="zh">配置选项</span>
+</div>
+<div class="component">
+<div class="component-title">
+<i class="fas fa-cube"></i>
+<span class="en">Top Case</span>
+<span class="zh">上壳</span>
+</div>
+<div class="select-container">
+<select class="custom-select" id="top-case-select">
+<!-- Options will be dynamically added -->
+</select>
+<div class="select-arrow">
+<i class="fas fa-chevron-down"></i>
+</div>
+</div>
+<div class="option-info" id="top-case-info"></div>
+</div>
+<div class="component">
+<div class="component-title">
+<i class="fas fa-cube"></i>
+<span class="en">Bottom Case</span>
+<span class="zh">下壳</span>
+</div>
+<div class="select-container">
+<select class="custom-select" id="bottom-case-select">
+<!-- Options will be dynamically added -->
+</select>
+<div class="select-arrow">
+<i class="fas fa-chevron-down"></i>
+</div>
+</div>
+<div class="option-info" id="bottom-case-info"></div>
+</div>
+<div class="component">
+<div class="component-title">
+<i class="fas fa-border-style"></i>
+<span class="en">Inner Plate</span>
+<span class="zh">内盖板</span>
+</div>
+<div class="select-container">
+<select class="custom-select" id="inner-plate-select">
+<!-- Options will be dynamically added -->
+</select>
+<div class="select-arrow">
+<i class="fas fa-chevron-down"></i>
+</div>
+</div>
+<div class="option-info" id="inner-plate-info"></div>
+</div>
+<div class="component">
+<div class="component-title">
+<i class="fas fa-weight-hanging"></i>
+<span class="en">Weight</span>
+<span class="zh">配重</span>
+</div>
+<div class="select-container">
+<select class="custom-select" id="weight-select">
+<!-- Options will be dynamically added -->
+</select>
+<div class="select-arrow">
+<i class="fas fa-chevron-down"></i>
+</div>
+</div>
+<div class="option-info" id="weight-info"></div>
+</div>
+<div class="component">
+<div class="component-title">
+<i class="fas fa-hand-paper"></i>
+<span class="en">Wrist Rest</span>
+<span class="zh">手托</span>
+</div>
+<div class="select-container">
+<select class="custom-select" id="wrist-rest-select">
+<!-- Options will be dynamically added -->
+</select>
+<div class="select-arrow">
+<i class="fas fa-chevron-down"></i>
+</div>
+</div>
+<div class="option-info" id="wrist-rest-info"></div>
+</div>
+<div class="component">
+<div class="component-title">
+<i class="fas fa-microchip"></i>
+<span class="en">PCB</span>
+<span class="zh">PCB</span>
+</div>
+<div class="select-container">
+<select class="custom-select" id="pcb-select">
+<!-- Options will be dynamically added -->
+</select>
+<div class="select-arrow">
+<i class="fas fa-chevron-down"></i>
+</div>
+</div>
+<div class="option-info" id="pcb-info"></div>
+</div>
+<div class="component">
+<div class="component-title">
+<i class="fas fa-th"></i>
+<span class="en">Plate</span>
+<span class="zh">定位板</span>
+</div>
+<div class="select-container">
+<select class="custom-select" id="plate-select">
+<!-- Options will be dynamically added -->
+</select>
+<div class="select-arrow">
+<i class="fas fa-chevron-down"></i>
+</div>
+</div>
+<div class="option-info" id="plate-info"></div>
+</div>
+</div>
+<div class="summary">
+<div class="section-title">
+<i class="fas fa-clipboard-list"></i>
+<span class="en">Configuration Summary</span>
+<span class="zh">配置摘要</span>
+</div>
+<div id="summary-items">
+<!-- Summary items will be dynamically added here -->
+</div>
+<div class="summary-item total">
+<span class="en">Total</span>
+<span class="zh">总计</span>
+<div>
+<span id="total-price">¥0</span>
+<span class="currency-switcher en">(¥)</span>
+<span class="currency-switcher zh">(USD)</span>
+</div>
+</div>
+<div class="summary-item">
+<span class="en">Total Weight</span>
+<span class="zh">总重量</span>
+<span id="total-weight">0g</span>
+</div>
+<button class="copy-link" id="copy-link">
+<i class="fas fa-link"></i>
+<span class="en">Copy Configuration Link</span>
+<span class="zh">复制配置链接</span>
+</button>
+</div>
+</div>
+<div class="notification" id="notification">
+<i class="fas fa-check-circle"></i>
+<span class="en">Link copied to clipboard!</span>
+<span class="zh">链接已复制到剪贴板！</span>
+</div>
+<footer>
+<p class="en">TOFU TKL Configurator Simulator © 2023</p>
+<p class="zh">TOFU TKL 配置器模拟器 © 2023</p>
+</footer>
+</div>
+<script>
         // Keyboard component data
         const components = {
             topCase: [
@@ -714,7 +701,7 @@
                         <div>
                             <strong>${name}:</strong> ${itemName}
                         </div>
-                        <div>${price}</div>
+                        <div></div>
                     `;
                     
                     summaryItems.appendChild(summaryItem);
